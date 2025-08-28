@@ -13,6 +13,8 @@ namespace ResumeSnippetManager
         private ToolStripMenuItem addSnippetToolStripMenuItem;
         private ToolStripMenuItem editSnippetToolStripMenuItem;
         private ToolStripMenuItem deleteSnippetToolStripMenuItem;
+        private StatusStrip statusStrip;
+        private ToolStripStatusLabel statusLabel;
 
         protected override void Dispose(bool disposing)
         {
@@ -35,7 +37,10 @@ namespace ResumeSnippetManager
             this.addSnippetToolStripMenuItem = new ToolStripMenuItem();
             this.editSnippetToolStripMenuItem = new ToolStripMenuItem();
             this.deleteSnippetToolStripMenuItem = new ToolStripMenuItem();
+            this.statusStrip = new StatusStrip();
+            this.statusLabel = new ToolStripStatusLabel();
             this.menuStrip.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
 
             // menuStrip
@@ -111,15 +116,30 @@ namespace ResumeSnippetManager
             this.btnCopy.Text = "Copy to Clipboard";
             this.btnCopy.UseVisualStyleBackColor = true;
 
+            // statusStrip
+            this.statusStrip.Items.AddRange(new ToolStripItem[] {
+                this.statusLabel});
+            this.statusStrip.Location = new Point(0, 441);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new Size(704, 22);
+            this.statusStrip.TabIndex = 6;
+            this.statusStrip.Text = "statusStrip";
+
+            // statusLabel
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new Size(39, 17);
+            this.statusLabel.Text = "Ready";
+
             // MainForm
             this.AutoScaleDimensions = new SizeF(7F, 15F);
             this.AutoScaleMode = AutoScaleMode.Font;
-            this.ClientSize = new Size(704, 441);
+            this.ClientSize = new Size(704, 463);
             this.Controls.Add(this.btnCopy);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.txtContent);
             this.Controls.Add(this.listSnippets);
             this.Controls.Add(this.lblSnippets);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip;
@@ -129,6 +149,8 @@ namespace ResumeSnippetManager
             this.Text = "Resume Snippet Manager";
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
         }

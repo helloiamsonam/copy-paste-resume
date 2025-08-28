@@ -8,6 +8,7 @@ namespace ResumeSnippetManager
     {
         private List<Snippet> snippets;
         private SnippetRepository repository;
+        private Timer statusTimer;
 
         public MainForm()
         {
@@ -20,6 +21,20 @@ namespace ResumeSnippetManager
         {
             repository = new SnippetRepository();
             LoadSnippets();
+            InitializeStatusTimer();
+        }
+
+        private void InitializeStatusTimer()
+        {
+            statusTimer = new Timer();
+            statusTimer.Interval = 3000;
+            statusTimer.Tick += StatusTimer_Tick;
+        }
+
+        private void StatusTimer_Tick(object? sender, EventArgs e)
+        {
+            statusLabel.Text = "Ready";
+            statusTimer.Stop();
         }
 
         private void SetupEventHandlers()
@@ -27,6 +42,7 @@ namespace ResumeSnippetManager
             btnCopy.Click += BtnCopy_Click;
             btnSave.Click += BtnSave_Click;
             listSnippets.SelectedIndexChanged += ListSnippets_SelectedIndexChanged;
+            listSnippets.DoubleClick += ListSnippets_DoubleClick;
             
             addSnippetToolStripMenuItem.Click += AddSnippetMenuItem_Click;
             editSnippetToolStripMenuItem.Click += EditSnippetMenuItem_Click;
@@ -35,17 +51,44 @@ namespace ResumeSnippetManager
 
         private void AddSnippetMenuItem_Click(object? sender, EventArgs e)
         {
-            var snippet = new Snippet
+            using (var titleDialog = new Form())
             {
-                Id = Guid.NewGuid().ToString(),
-                Category = "General",
-                Title = "New Snippet",
-                Content = "Enter your resume snippet here..."
-            };
-            snippets.Add(snippet);
-            SaveSnippets();
-            RefreshSnippetsList();
-            listSnippets.SelectedIndex = snippets.Count - 1;
+                titleDialog.Text = "New Snippet";
+                titleDialog.Size = new Size(350, 120);
+                titleDialog.StartPosition = FormStartPosition.CenterParent;
+                titleDialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                titleDialog.MaximizeBox = false;
+                titleDialog.MinimizeBox = false;
+
+                var lblTitle = new Label() { Left = 12, Top = 15, Text = "Snippet Title:", AutoSize = true };
+                var txtTitle = new TextBox() { Left = 12, Top = 35, Width = 300, Text = "New Snippet" };
+                txtTitle.SelectAll();
+                
+                var btnOK = new Button() { Text = "OK", Left = 157, Width = 75, Top = 65, DialogResult = DialogResult.OK };
+                var btnCancel = new Button() { Text = "Cancel", Left = 237, Width = 75, Top = 65, DialogResult = DialogResult.Cancel };
+
+                titleDialog.Controls.Add(lblTitle);
+                titleDialog.Controls.Add(txtTitle);
+                titleDialog.Controls.Add(btnOK);
+                titleDialog.Controls.Add(btnCancel);
+                titleDialog.AcceptButton = btnOK;
+                titleDialog.CancelButton = btnCancel;
+
+                if (titleDialog.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(txtTitle.Text))
+                {
+                    var snippet = new Snippet
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Category = "General",
+                        Title = txtTitle.Text.Trim(),
+                        Content = "Enter your resume snippet here..."
+                    };
+                    snippets.Add(snippet);
+                    SaveSnippets();
+                    RefreshSnippetsList();
+                    listSnippets.SelectedIndex = snippets.Count - 1;
+                }
+            }
         }
 
         private void EditSnippetMenuItem_Click(object? sender, EventArgs e)
@@ -100,14 +143,18 @@ namespace ResumeSnippetManager
         {
             if (listSnippets.SelectedIndex < 0)
             {
-                MessageBox.Show("Please select a snippet to copy.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                statusLabel.Text = "Please select a snippet to copy.";
+                statusTimer.Stop();
+                statusTimer.Start();
                 return;
             }
 
             if (!string.IsNullOrEmpty(txtContent.Text))
             {
                 Clipboard.SetText(txtContent.Text);
-                MessageBox.Show("Snippet copied!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                statusLabel.Text = "Snippet copied to clipboard!";
+                statusTimer.Stop();
+                statusTimer.Start();
             }
         }
 
@@ -117,6 +164,48 @@ namespace ResumeSnippetManager
             {
                 var snippet = snippets[listSnippets.SelectedIndex];
                 txtContent.Text = snippet.Content;
+            }
+        }
+
+        private void ListSnippets_DoubleClick(object? sender, EventArgs e)
+        {
+            if (listSnippets.SelectedIndex >= 0)
+            {
+                var snippet = snippets[listSnippets.SelectedIndex];
+                
+                using (var titleDialog = new Form())
+                {
+                    titleDialog.Text = "Rename Snippet";
+                    titleDialog.Size = new Size(350, 120);
+                    titleDialog.StartPosition = FormStartPosition.CenterParent;
+                    titleDialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                    titleDialog.MaximizeBox = false;
+                    titleDialog.MinimizeBox = false;
+
+                    var lblTitle = new Label() { Left = 12, Top = 15, Text = "Snippet Title:", AutoSize = true };
+                    var txtTitle = new TextBox() { Left = 12, Top = 35, Width = 300, Text = snippet.Title };
+                    txtTitle.SelectAll();
+                    
+                    var btnOK = new Button() { Text = "OK", Left = 157, Width = 75, Top = 65, DialogResult = DialogResult.OK };
+                    var btnCancel = new Button() { Text = "Cancel", Left = 237, Width = 75, Top = 65, DialogResult = DialogResult.Cancel };
+
+                    titleDialog.Controls.Add(lblTitle);
+                    titleDialog.Controls.Add(txtTitle);
+                    titleDialog.Controls.Add(btnOK);
+                    titleDialog.Controls.Add(btnCancel);
+                    titleDialog.AcceptButton = btnOK;
+                    titleDialog.CancelButton = btnCancel;
+
+                    if (titleDialog.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(txtTitle.Text))
+                    {
+                        snippet.Title = txtTitle.Text.Trim();
+                        SaveSnippets();
+                        RefreshSnippetsList();
+                        statusLabel.Text = "Snippet renamed!";
+                        statusTimer.Stop();
+                        statusTimer.Start();
+                    }
+                }
             }
         }
 
