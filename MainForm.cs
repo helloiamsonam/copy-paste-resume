@@ -25,6 +25,7 @@ namespace ResumeSnippetManager
         private void SetupEventHandlers()
         {
             btnCopy.Click += BtnCopy_Click;
+            btnSave.Click += BtnSave_Click;
             listSnippets.SelectedIndexChanged += ListSnippets_SelectedIndexChanged;
             
             addSnippetToolStripMenuItem.Click += AddSnippetMenuItem_Click;
@@ -78,6 +79,21 @@ namespace ResumeSnippetManager
                     txtContent.Text = "";
                 }
             }
+        }
+
+        private void BtnSave_Click(object? sender, EventArgs e)
+        {
+            if (listSnippets.SelectedIndex < 0)
+            {
+                MessageBox.Show("Please select a snippet to save.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedSnippet = snippets[listSnippets.SelectedIndex];
+            selectedSnippet.Content = txtContent.Text;
+            
+            SaveSnippets();
+            MessageBox.Show("Snippet saved!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void BtnCopy_Click(object? sender, EventArgs e)

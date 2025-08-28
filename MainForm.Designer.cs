@@ -6,6 +6,7 @@ namespace ResumeSnippetManager
         private ListBox listSnippets;
         private TextBox txtContent;
         private Button btnCopy;
+        private Button btnSave;
         private Label lblSnippets;
         private MenuStrip menuStrip;
         private ToolStripMenuItem snippetToolStripMenuItem;
@@ -27,6 +28,7 @@ namespace ResumeSnippetManager
             this.listSnippets = new ListBox();
             this.txtContent = new TextBox();
             this.btnCopy = new Button();
+            this.btnSave = new Button();
             this.lblSnippets = new Label();
             this.menuStrip = new MenuStrip();
             this.snippetToolStripMenuItem = new ToolStripMenuItem();
@@ -89,16 +91,23 @@ namespace ResumeSnippetManager
             this.txtContent.Location = new Point(280, 53);
             this.txtContent.Multiline = true;
             this.txtContent.Name = "txtContent";
-            this.txtContent.ReadOnly = true;
             this.txtContent.ScrollBars = ScrollBars.Vertical;
             this.txtContent.Size = new Size(400, 334);
             this.txtContent.TabIndex = 3;
+
+            // btnSave
+            this.btnSave.Location = new Point(410, 404);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new Size(130, 23);
+            this.btnSave.TabIndex = 4;
+            this.btnSave.Text = "Save Changes";
+            this.btnSave.UseVisualStyleBackColor = true;
 
             // btnCopy
             this.btnCopy.Location = new Point(550, 404);
             this.btnCopy.Name = "btnCopy";
             this.btnCopy.Size = new Size(130, 23);
-            this.btnCopy.TabIndex = 4;
+            this.btnCopy.TabIndex = 5;
             this.btnCopy.Text = "Copy to Clipboard";
             this.btnCopy.UseVisualStyleBackColor = true;
 
@@ -107,6 +116,7 @@ namespace ResumeSnippetManager
             this.AutoScaleMode = AutoScaleMode.Font;
             this.ClientSize = new Size(704, 441);
             this.Controls.Add(this.btnCopy);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.txtContent);
             this.Controls.Add(this.listSnippets);
             this.Controls.Add(this.lblSnippets);
