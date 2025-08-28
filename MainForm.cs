@@ -8,7 +8,7 @@ namespace ResumeSnippetManager
     {
         private List<Snippet> snippets;
         private SnippetRepository repository;
-        private Timer statusTimer;
+        private System.Windows.Forms.Timer statusTimer;
 
         public MainForm()
         {
@@ -26,7 +26,7 @@ namespace ResumeSnippetManager
 
         private void InitializeStatusTimer()
         {
-            statusTimer = new Timer();
+            statusTimer = new System.Windows.Forms.Timer();
             statusTimer.Interval = 3000;
             statusTimer.Tick += StatusTimer_Tick;
         }
